@@ -1,22 +1,31 @@
 package com.proj.portal.controller;
 
 import com.proj.portal.model.User;
+import com.proj.portal.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLException;
 
 @RestController
 public class AuthenticationController {
-
-//    http://localhost:8080/register?data=%7B%22name%22%3A%22ABC%22%2C%22id%22%3A%221%22%7D
+    @Autowired
+    UserService userService;
     @RequestMapping("/register")
     @ResponseBody
-    public String register(String data) {
-        return data;
+    public String register(@RequestBody User user) throws SQLException {
+        int result = userService.saveUser(user);
+        if (result == 0) {
+            return "User registered";
+        } else {
+            return "User already exists";
+        }
     }
 
-//    http://localhost:8080/login?data=%7B%22name%22%3A%22ABC%22%2C%22id%22%3A%221%22%7D
     @RequestMapping("/login")
     @ResponseBody
-    public String login(String data) {
-        return data;
+    public String login(@RequestParam String email, @RequestParam String password) throws SQLException {
+        System.out.println(email);
+        return userService.validateLogin(email, password);
     }
 }
